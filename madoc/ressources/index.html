@@ -50,7 +50,8 @@
           {name: 'page1', content: '# page1.md'},
           {name: 'page2', content: '## page2.md'},
           {name: 'page3', content: '### page3.md'},
-          {name: 'page345', content: '### page345.md'},
+          {name: 'page345', content: `### page345.md `},
+          {name: 'page347', content: "### page347.md ```&lt;script&gt;alert('hello')&lt;/script&gt;```"},
         ],
         content: ''
       }
@@ -63,7 +64,7 @@
     methods: {
       display(page){
         console.log('display')
-        this.content = marked.parse(page.content)
+        this.content = marked.parse(page.content.replace(/&lt;/g, '<').replace(/&gt;/g, '>'))
       }
     },
     beforeMount(){

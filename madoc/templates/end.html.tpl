@@ -10,7 +10,7 @@
     methods: {
       display(page){
         console.log('display')
-        this.content = marked.parse(page.content)
+        this.content = marked.parse(page.content.replace(/&lt;/g, '<').replace(/&gt;/g, '>'))
       }
     },
     beforeMount(){

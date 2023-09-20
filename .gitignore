@@ -1,4 +1,10 @@
 page_01.md
 page_02.md
+page_03.md
 documentation_from_md.html
 /00_index.html
+
+build/
+dist/
+madoc.egg-info/
+madoc/__pycache__/

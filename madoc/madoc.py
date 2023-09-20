@@ -20,12 +20,11 @@ def md_to_html():
         page = {}
         if file.endswith(".md"):
             with open(file, "r") as md_file:
-                page['content'] = md_file.read()
+                page['content'] = md_file.read().replace("<", "&lt;").replace(">", "&gt;")
                 page['name'] = file.replace(".md", "")
                 pages.append(page)
 
     json_pages = json.dumps(pages)
-    print(json_pages)
     with open(os.path.join(DIR, "documentation_from_md.html"), "w") as html_file:
         html_file.write(START)
         html_file.write(json_pages)

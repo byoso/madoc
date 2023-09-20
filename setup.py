@@ -13,7 +13,7 @@ twine upload --repository testpypi dist/*
 twine upload dist/*
 """
 
-from geninstaller import __version__
+from madoc import __version__
 import pathlib
 from setuptools import setup
 
@@ -26,10 +26,10 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="geninstaller",
+    name="madoc",
     version=f"{__version__}",
     description=(
-        "Linux universal app installer and manager, in the user's space only"
+        "Documentation generator from markdown files"
         ),
     long_description=README,
     long_description_content_type="text/markdown",
@@ -53,10 +53,10 @@ setup(
     python_requires='>=3.10',
     install_requires=[
     ],
-    keywords='markdown html documnentation',
+    keywords='markdown html documentation',
     entry_points={
         "console_scripts": [
-            "madoc=madoc:cmd",
+            "madoc=madoc.madoc:cmd",
         ]
     },
     setup_requires=['wheel'],
