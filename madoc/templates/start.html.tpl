@@ -21,8 +21,8 @@
   <aside class="menu">
     <h1 class="title">Documents</h1>
     <ul>
-      <li v-for="page in pages">
-        <button @click="display(page)" class="button is-fullwidth">{{ page.name }}</button>
+      <li v-for="page in pages" :key="page">
+        <button @click="display(page)" class="button is-fullwidth has-text-left">{{ page.name }}</button>
       </li>
     </ul>
 

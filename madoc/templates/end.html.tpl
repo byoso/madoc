@@ -43,10 +43,14 @@
   overflow-x: scroll;
 
 }
+
+html {
+    background-color: #fbfbfb;
+}
+
 body {
     font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #111;
-    background-color: #fbfbfb;
     -webkit-text-size-adjust: 100%;
     -webkit-font-feature-settings: "kern" 1;
     -moz-font-feature-settings: "kern" 1;
@@ -54,6 +58,11 @@ body {
     font-feature-settings: "kern" 1;
     font-kerning: normal;
     padding: 30px;
+}
+
+
+.button.has-text-left {
+  justify-content: flex-start;
 }
 
 @media only screen and (max-width: 600px) {
@@ -91,11 +100,6 @@ hr {
     border: none;
 }
 
-.hljs-operator {
-    color: #868686;
-    /* There is a bug where the syntax highlighter would pick no color for e.g. `&&` symbols in the code samples. Let's overwrite this */
-}
-
 
 /**
  * Links
@@ -117,7 +121,7 @@ a:hover {
 
 pre {
     background-color: #dbdbdb;
-    font-size: 1.2em;
+    font-size: 1.1em;
     border-radius: 3px;
     line-height: 1.45;
     overflow: auto;
