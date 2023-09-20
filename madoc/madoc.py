@@ -30,6 +30,8 @@ def md_to_html():
         html_file.write(json_pages)
         html_file.write(END)
 
+    print("Done !")
+
 
 def cmd():
     """Command line interface"""
