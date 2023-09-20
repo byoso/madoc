@@ -31,7 +31,7 @@
   vertical-align: top;
   max-height: 100vh;
   overflow-y: auto;
-  width: 400px;
+  min-width: 400px;
   top: 0;
   bottom: 0;
   padding: 30px;
@@ -39,6 +39,9 @@
 
 .content {
   display: inline-block;
+  width: 80%;
+  overflow-x: scroll;
+
 }
 body {
     font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
