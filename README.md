@@ -7,3 +7,17 @@ It is a terminal tool to automatically generate a single html documentation file
 the .md files found in the directory.
 
 Cool stuff to join a clean and easy to read documentation to some project.
+
+
+# Installation
+
+`pip install madoc`
+
+
+# Usage
+
+Open a terminal in the directory where are the .md files you whant to use for your documentation,
+and just type
+`madoc`
+
+done, you have your documentation in a single html file.
