@@ -56,7 +56,7 @@ setup(
     keywords='markdown html documnentation',
     entry_points={
         "console_scripts": [
-            "madoc=madoc.cmd:cmd",
+            "madoc=madoc:cmd",
         ]
     },
     setup_requires=['wheel'],
