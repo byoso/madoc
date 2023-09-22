@@ -7,15 +7,17 @@ import uuid
 
 import jinja2
 
-from jinja2 import Environment, select_autoescape, PackageLoader
+from jinja2 import Environment, select_autoescape, PackageLoader, FileSystemLoader
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIR = os.getcwd()
-
+TEMPLATES = os.path.join(BASE_DIR, "templates")
+print("=== templates: ", TEMPLATES)
 
 env = Environment(
-    loader=PackageLoader("templates", "madoc"),
+    # loader=PackageLoader("templates", "madoc"),
+    loader=FileSystemLoader(TEMPLATES),
     autoescape=select_autoescape()
 )
 
@@ -23,7 +25,7 @@ template = env.get_template("render.html")
 
 
 
-def md_to_html(
+def main(
     bg_color="#fbfbfb",
     title="Documents",
 ):
@@ -56,8 +58,8 @@ def md_to_html(
 
 def cmd():
     """Command line interface"""
-    md_to_html()
+    main()
 
 
 if __name__ == "__main__":
-    md_to_html()
+    main()
