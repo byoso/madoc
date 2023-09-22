@@ -52,6 +52,7 @@ setup(
     package_data={'': ['*.tpl', '*.html']},
     python_requires='>=3.10',
     install_requires=[
+        'Jinja2>=3.1.2,<4.0.0',
     ],
     keywords='markdown html documentation',
     entry_points={
