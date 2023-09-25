@@ -7,7 +7,7 @@ import uuid
 
 from jinja2 import Environment, select_autoescape
 
-from loader import MadocLoader
+from madoc.loader import MadocLoader
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
