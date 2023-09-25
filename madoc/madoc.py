@@ -5,8 +5,6 @@ import os
 import json
 import uuid
 
-import jinja2
-
 from jinja2 import Environment, select_autoescape, PackageLoader
 
 
@@ -20,7 +18,6 @@ env = Environment(
 )
 
 template = env.get_template("render.html")
-
 
 
 def md_to_html(
@@ -51,7 +48,6 @@ def md_to_html(
         f.write(template.render(**context))
 
     print("Done !")
-
 
 
 def cmd():
