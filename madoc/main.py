@@ -4,6 +4,7 @@
 import os
 import json
 import uuid
+import argparse
 
 from jinja2 import Environment, select_autoescape
 
@@ -22,7 +23,13 @@ template = env.get_template("madoc/render.html")
 
 
 def cmd(*args, **kwargs):
-    main()
+    """Command line interface"""
+    parser = argparse.ArgumentParser(description="Convert all markdown files in the directory into a single html file")
+    parser.add_argument("--bg-color", type=str, default="#fbfbfb", help="Background color, default is #fbfbfb")
+    parser.add_argument("--title", type=str, default="Documents", help="Title of the page, default is 'Documents'")
+    args = parser.parse_args()
+
+    main(args.bg_color, args.title)
 
 
 def main(

@@ -22,3 +22,5 @@ and just type:
 `madoc`
 
 done, you have your documentation in a single html file.
+
+Know more options with `madoc -h`.
