@@ -5,24 +5,24 @@ import os
 import json
 import uuid
 
-import jinja2
+from jinja2 import Environment, select_autoescape
 
-from jinja2 import Environment, select_autoescape, PackageLoader, FileSystemLoader
+from madoc.loader import MadocLoader
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIR = os.getcwd()
-TEMPLATES = os.path.join(BASE_DIR, "templates")
-print("=== templates: ", TEMPLATES)
 
 env = Environment(
-    # loader=PackageLoader("templates", "madoc"),
-    loader=FileSystemLoader(TEMPLATES),
+    loader=MadocLoader(os.path.join(BASE_DIR, "templates")),
     autoescape=select_autoescape()
 )
 
-template = env.get_template("render.html")
+template = env.get_template("madoc/render.html")
 
+
+def cmd(*args, **kwargs):
+    main()
 
 
 def main(
@@ -41,7 +41,6 @@ def main(
                 pages.append(page)
     json_pages = json.dumps(pages)
 
-    template = env.get_template("render.html")
     context = {
         "uuid": uuid_value,
         "bg_color": bg_color,
@@ -55,11 +54,5 @@ def main(
     print("Done !")
 
 
-
-def cmd():
-    """Command line interface"""
-    main()
-
-
 if __name__ == "__main__":
-    main()
+    cmd()

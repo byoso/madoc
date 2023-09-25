@@ -47,6 +47,7 @@ setup(
     packages=[
         "madoc",
         "madoc.templates",
+        "madoc.templates.madoc",
         ],
     # include_package_data=True,
     package_data={'': ['*.tpl', '*.html']},
@@ -57,7 +58,7 @@ setup(
     keywords='markdown html documentation',
     entry_points={
         "console_scripts": [
-            "madoc=madoc.madoc:cmd",
+            "madoc=madoc.main:cmd",
         ]
     },
     setup_requires=['wheel'],

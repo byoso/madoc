@@ -25,10 +25,6 @@
         <li v-for="page in pages" :key="page">
           <button @click="display(page)" class="button is-fullwidth has-text-left">[[ page.name ]]</button>
         </li>
-        <li>
-          <br>
-          <a href="https://github.com/byoso/madoc">about Madoc</a>
-        </li>
       </ul>
 
     </aside>
@@ -50,8 +46,8 @@
     delimiters: ['[[', ']]'],
     data() {
       return {
-        uuid: "055b1884-7cf3-4f19-b9c2-088ad32be8fc",
-        pages: [{"content": "MIT License\n\nCopyright (c) 2023 Vincent Fabre\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n", "name": "LICENSE"}, {"content": "# limitations\n\nMarkdown is expected to be read in html, so it is somehow sensitive to\nthe use of html tags.\n\nTherefore, the unsafe tags such as `<055b1884-7cf3-4f19-b9c2-088ad32be8fcscript055b1884-7cf3-4f19-b9c2-088ad32be8fc>` and `<055b1884-7cf3-4f19-b9c2-088ad32be8fcstyle055b1884-7cf3-4f19-b9c2-088ad32be8fc>` are escaped if placed\nout of code tags '`' or '```'.\n\nThat's all.\n", "name": "01 Limitations"}, {"content": "# Madoc\n\n\n## What for ?\n\nIt is a terminal tool to automatically generate a single html documentation file from all\nthe .md files found in the directory.\n\nCool stuff to join a clean and easy to read documentation to some project.\n\n\n# Installation\n\n`pip install madoc`\n\n\n# Usage\n\nOpen a terminal in the directory where the .md files are,\nand just type:\n\n`madoc`\n\ndone, you have your documentation in a single html file.\n", "name": "README"}],
+        uuid: "fbf68ab9-5103-4c90-8f5e-80610ee04595",
+        pages: [],
         content: '',
       }
     },
