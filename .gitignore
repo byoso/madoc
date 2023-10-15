@@ -3,6 +3,13 @@ page_02.md
 page_03.md
 documentation_from_md.html
 /00_index.html
+test_files/
+madoc_dist/
+
+__pycache__/
+*.pyc
+*.madoc.html
+index.html
 
 build/
 dist/

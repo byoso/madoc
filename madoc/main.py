@@ -9,7 +9,8 @@ import argparse
 from jinja2 import Environment, select_autoescape
 
 from madoc.loader import MadocLoader
-
+from madoc import __version__
+from madoc.madoc_recursive import main_recursive
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIR = os.getcwd()
@@ -24,11 +25,21 @@ template = env.get_template("madoc/render.html")
 
 def cmd(*args, **kwargs):
     """Command line interface"""
+    # positionnal arguments
     parser = argparse.ArgumentParser(description="Convert all markdown files in the directory into a single html file")
-    parser.add_argument("--bg-color", type=str, default="#fbfbfb", help="Background color, default is #fbfbfb")
-    parser.add_argument("--title", type=str, default="Documents", help="Title of the page, default is 'Documents'")
+    parser.add_argument("-b", "--bg-color", type=str, default="#fbfbfb", help="Background color, default is #fbfbfb")
+    parser.add_argument("-t", "--title", type=str, default="Documents", help="Title of the page, default is 'Documents'")
+    # flags (store_true)
+    parser.add_argument("-v", "--version", help="Version", action="store_true")
+    parser.add_argument("-r", help="Recursive action, links the subfolders to an index", action="store_true")
     args = parser.parse_args()
-
+    if args.version:
+        print(__version__)
+        return
+    if args.r:
+        main_recursive(args.bg_color, args.title)
+        print("recursive action")
+        return
     main(args.bg_color, args.title)
 
 
