@@ -104,10 +104,30 @@ def index_builder(datas, bg_color="#fbfbfb"):
 def main_recursive(
     bg_color="#fbfbfb",
 ):
-    print("=== main DIR: ", DIR)
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
         shutil.rmtree(os.path.join(DIR, "madoc_dist"))
-    datas, _validity = parser(directory=DIR, bg_color=bg_color, dist_dir=os.path.join(DIR, "madoc_dist"))
-    pprint(datas)
-    index_builder(datas, bg_color=bg_color)
-    print("Madoc recursive build done !")
+    rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, dist_dir=os.path.join(DIR, "madoc_dist"))
+
+    if rec_is_valid:
+        links = [{
+            'name': link['directory'].split("/")[-1],
+            'url':link['directory'].split("/")[-1] + "/documentation.madoc.html"
+            } for link in rec_datas['subdirs']]
+        datas = {'subdirs': [], 'files': []}
+        datas['subdirs'].append(rec_datas)
+        # pprint(datas)
+        # sort rec_datas['files'] by name
+        rec_datas['files'] = sorted(rec_datas['files'])
+        build_html(
+            path=DIR,
+            pages=rec_datas['files'],
+            links=links,
+            dist_dir=os.path.join(DIR, "madoc_dist"),
+            level=0,
+            bg_color=bg_color,
+            title="root/",
+        )
+    print("=== main DIR: ", DIR)
+    pprint(rec_datas)
+    index_builder(rec_datas, bg_color=bg_color)
+    print("Madoc : recursive build successfully done !")
