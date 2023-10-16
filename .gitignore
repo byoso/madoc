@@ -1,3 +1,7 @@
+# files used for testing
+index.html
+note.jpeg
+static_in_root.md
 page_01.md
 page_02.md
 page_03.md
@@ -9,8 +13,6 @@ madoc_dist/
 __pycache__/
 *.pyc
 *.madoc.html
-index.html
-
 build/
 dist/
 madoc.egg-info/

@@ -82,6 +82,13 @@ def parser(directory=DIR, bg_color="#fbfbfb", dist_dir="madoc_dist", level=0):
         elif name.endswith(".md"):
             is_valid = True
             datas['files'].append(name)
+        # copy or ignore files
+        elif name.endswith(".madoc.html"):
+            continue
+        elif name.split(".")[-1] in ["html", "css", "js", "png", "jpg", "jpeg", "gif", "svg", "ico", "json"]:
+            if not os.path.exists(os.path.join(dist_dir)):
+                os.makedirs(os.path.join(dist_dir))
+            shutil.copyfile(path, os.path.join(dist_dir, name))
         datas['level'] = level
     return datas, is_valid
 
@@ -89,7 +96,7 @@ def parser(directory=DIR, bg_color="#fbfbfb", dist_dir="madoc_dist", level=0):
 def index_builder(datas, bg_color="#fbfbfb"):
     template = env.get_template("madoc/recursive_index.html")
     datas = [datas]
-    pprint(datas)
+    # pprint(datas)
     context = {
         "bg_color": bg_color,
         "datas": datas,
@@ -106,6 +113,8 @@ def main_recursive(
 ):
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
         shutil.rmtree(os.path.join(DIR, "madoc_dist"))
+
+    # Initialize the loop
     rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, dist_dir=os.path.join(DIR, "madoc_dist"))
 
     if rec_is_valid:
@@ -127,7 +136,7 @@ def main_recursive(
             bg_color=bg_color,
             title="root/",
         )
-    print("=== main DIR: ", DIR)
-    pprint(rec_datas)
+    # print("=== main DIR: ", DIR)
+    # pprint(rec_datas)
     index_builder(rec_datas, bg_color=bg_color)
-    print("Madoc : recursive build successfully done !")
+    print("Madoc SUCCESS: recursive build done ! Check the 'madoc_dist' folder.")
