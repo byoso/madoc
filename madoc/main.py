@@ -28,7 +28,7 @@ def cmd(*args, **kwargs):
     # positionnal arguments
     parser = argparse.ArgumentParser(description="Convert all markdown files in the directory into a single html file")
     parser.add_argument("-b", "--bg-color", type=str, default="#fbfbfb", help="Background color, default is #fbfbfb")
-    parser.add_argument("-t", "--title", type=str, default="Documents", help="Title of the page, default is 'Documents'")
+    parser.add_argument("-t", "--title", type=str, default="Documents", help="Title of the page, default is 'Documents', non recursive only")
     # flags (store_true)
     parser.add_argument("-v", "--version", help="Version", action="store_true")
     parser.add_argument("-r", help="Recursive action, links the subfolders to an index", action="store_true")
@@ -37,8 +37,7 @@ def cmd(*args, **kwargs):
         print(__version__)
         return
     if args.r:
-        main_recursive(args.bg_color, args.title)
-        print("recursive action")
+        main_recursive(args.bg_color)
         return
     main(args.bg_color, args.title)
 

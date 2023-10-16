@@ -19,7 +19,6 @@ env = Environment(
 
 def build_html(path, pages, links, dist_dir, level, bg_color, title):
     """Convert all markdown files to html files"""
-    print("===links: ", links)
     template = env.get_template("madoc/recursive_render.html")
     pages = []
     uuid_value = str(uuid.uuid4())
@@ -45,9 +44,10 @@ def build_html(path, pages, links, dist_dir, level, bg_color, title):
         f.write(template.render(**context))
 
 
-def parser(directory=DIR, dist_dir="madoc_dist", level=0):
+def parser(directory=DIR, bg_color="#fbfbfb", dist_dir="madoc_dist", level=0):
     datas = {'directory': directory, 'subdirs': [], 'files': []}
     is_valid = False
+    links = []
     for name in os.listdir(directory):
         if name.startswith("."):
             continue
@@ -55,46 +55,59 @@ def parser(directory=DIR, dist_dir="madoc_dist", level=0):
         path = os.path.join(directory, name)
         # Directories
         if os.path.isdir(path):
-            rec_datas, rec_is_valid = parser(directory=path, dist_dir=os.path.join(dist_dir, name), level=level+1)
+            rec_datas, rec_is_valid = parser(directory=path, bg_color=bg_color, dist_dir=os.path.join(dist_dir, name), level=level+1)
             if rec_is_valid:
+                links = [{
+                    'name': link['directory'].split("/")[-1],
+                    'url':"/".join(link['directory'].split("/")[-(rec_datas['level']-level):]) + "/documentation.madoc.html"
+                    } for link in rec_datas['subdirs']]
                 datas['subdirs'].append(rec_datas)
-                print("=== subdirs: ")
-                pprint(rec_datas['subdirs'])
+                # pprint(datas)
                 # makes the tree in madoc_dist
                 if not os.path.exists(os.path.join(dist_dir, name)):
                     os.makedirs(os.path.join(dist_dir, name))
-                    links = []
-                    for elem in datas['subdirs']:
-                        links.append({'name': elem['directory'].split("/")[-1]})
-                        # links.append({'name': "test"})
-                    build_html(
-                        path=path,
-                        pages=rec_datas['files'],
-                        links=links,
-                        dist_dir=os.path.join(dist_dir, name),
-                        level=level+1,
-                        bg_color="#fbfbfb",
-                        title="Documents",
-                    )
+                # sort rec_datas['files'] by name
+                rec_datas['files'] = sorted(rec_datas['files'])
+                build_html(
+                    path=path,
+                    pages=rec_datas['files'],
+                    links=links,
+                    dist_dir=os.path.join(dist_dir, name),
+                    level=level+1,
+                    bg_color=bg_color,
+                    title=name,
+                )
                 is_valid = True
         # files
         elif name.endswith(".md"):
             is_valid = True
             datas['files'].append(name)
+        datas['level'] = level
     return datas, is_valid
 
 
-def index_builder(datas, bg_color="#fbfbfb", title="Documents"):
-    pass
+def index_builder(datas, bg_color="#fbfbfb"):
+    template = env.get_template("madoc/recursive_index.html")
+    datas = [datas]
+    pprint(datas)
+    context = {
+        "bg_color": bg_color,
+        "datas": datas,
+        "base_dir": "",
+    }
+
+    with open(os.path.join(DIR, 'madoc_dist', "index.html"), "w") as f:
+        f.write(template.render(**context))
+
 
 
 def main_recursive(
     bg_color="#fbfbfb",
-    title="Documents",
 ):
     print("=== main DIR: ", DIR)
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
         shutil.rmtree(os.path.join(DIR, "madoc_dist"))
-    datas, _validity = parser(directory=DIR, dist_dir=os.path.join(DIR, "madoc_dist"))
+    datas, _validity = parser(directory=DIR, bg_color=bg_color, dist_dir=os.path.join(DIR, "madoc_dist"))
     pprint(datas)
-    index_builder(datas, bg_color=bg_color, title=title)
+    index_builder(datas, bg_color=bg_color)
+    print("Madoc recursive build done !")

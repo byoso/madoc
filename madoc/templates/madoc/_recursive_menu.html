@@ -1,0 +1,22 @@
+
+{% for  stage in datas %}
+
+  {% if stage.directory %}
+    <a href="{{ base_dir + '/' + stage.directory.split('/')[-1]+'/documentation.madoc.html' }}">{{ stage.directory.split("/")[-1] }}</a>
+    <ul>
+      {% for file in stage.files %}
+        <li class="is-size-7">{{ file[:-3] }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <br>
+  {% if stage.subdirs %}
+  <div style="margin-left:20px;">
+    {% with datas=stage.subdirs, base_dir=base_dir + "/" + stage.directory.split('/')[-1] %}
+      {% include 'madoc/_recursive_menu.html' %}
+    {% endwith %}
+  </div>
+  {% endif %}
+
+{% endfor %}
