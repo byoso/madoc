@@ -24,3 +24,8 @@ and just type:
 done, you have your documentation in a single html file.
 
 Know more options with `madoc -h`.
+
+# Changelog
+
+TODO: responsive design
+1.1.0: Recursive build mode
