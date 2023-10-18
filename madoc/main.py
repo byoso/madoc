@@ -26,7 +26,12 @@ template = env.get_template("madoc/render.html")
 def cmd(*args, **kwargs):
     """Command line interface"""
     # positionnal arguments
-    parser = argparse.ArgumentParser(description="Convert all markdown files in the directory into a single html file")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Convert all markdown files in the directory into a single html file. "
+            "Or recursively gather your documentation in an index.html file and subfolders, usable as a static site."
+            )
+        )
     parser.add_argument("-b", "--bg-color", type=str, default="#fbfbfb", help="Background color, default is #fbfbfb")
     parser.add_argument("-t", "--title", type=str, default="Documents", help="Title of the page, default is 'Documents' (root page if recursive)")
     # flags (store_true)
