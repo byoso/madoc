@@ -3,6 +3,7 @@ import uuid
 import json
 from pprint import pprint
 import shutil
+from datetime import date
 
 from jinja2 import Environment, select_autoescape
 
@@ -17,7 +18,7 @@ env = Environment(
 )
 
 
-def build_html(path, pages, links, dist_dir, level, bg_color, title):
+def build_html(path, pages, links, dist_dir, level, bg_color, no_mark, title):
     """Convert all markdown files to html files"""
     template = env.get_template("madoc/recursive_render.html")
     pages = []
@@ -33,9 +34,10 @@ def build_html(path, pages, links, dist_dir, level, bg_color, title):
 
     context = {
         "uuid": uuid_value,
-        "bg_color": bg_color,
         "index_link": level*"../" + "index.html",
         "links": links,
+        "bg_color": bg_color,
+        "no_mark": no_mark,
         "title": title,
         "pages": json_pages,
     }
@@ -44,7 +46,7 @@ def build_html(path, pages, links, dist_dir, level, bg_color, title):
         f.write(template.render(**context))
 
 
-def parser(directory=DIR, bg_color="#fbfbfb", dist_dir="madoc_dist", level=0):
+def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dist", level=0):
     datas = {'directory': directory, 'subdirs': [], 'files': []}
     is_valid = False
     links = []
@@ -55,7 +57,7 @@ def parser(directory=DIR, bg_color="#fbfbfb", dist_dir="madoc_dist", level=0):
         path = os.path.join(directory, name)
         # Directories
         if os.path.isdir(path):
-            rec_datas, rec_is_valid = parser(directory=path, bg_color=bg_color, dist_dir=os.path.join(dist_dir, name), level=level+1)
+            rec_datas, rec_is_valid = parser(directory=path, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(dist_dir, name), level=level+1)
             if rec_is_valid:
                 links = [{
                     'name': link['directory'].split("/")[-1],
@@ -75,6 +77,7 @@ def parser(directory=DIR, bg_color="#fbfbfb", dist_dir="madoc_dist", level=0):
                     dist_dir=os.path.join(dist_dir, name),
                     level=level+1,
                     bg_color=bg_color,
+                    no_mark=no_mark,
                     title=name,
                 )
                 is_valid = True
@@ -93,14 +96,18 @@ def parser(directory=DIR, bg_color="#fbfbfb", dist_dir="madoc_dist", level=0):
     return datas, is_valid
 
 
-def index_builder(datas, bg_color="#fbfbfb"):
+def index_builder(datas, bg_color="#fbfbfb", no_mark=False, title=""):
+    date_created = date.today().strftime("%B %d, %Y")
     template = env.get_template("madoc/recursive_index.html")
     datas = [datas]
     # pprint(datas)
     context = {
         "bg_color": bg_color,
+        "no_mark": no_mark,
         "datas": datas,
         "base_dir": "",
+        "date_created": date_created,
+        "title": title,
     }
 
     with open(os.path.join(DIR, 'madoc_dist', "index.html"), "w") as f:
@@ -110,12 +117,14 @@ def index_builder(datas, bg_color="#fbfbfb"):
 
 def main_recursive(
     bg_color="#fbfbfb",
+    no_mark=False,
+    title="",
 ):
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
         shutil.rmtree(os.path.join(DIR, "madoc_dist"))
 
     # Initialize the loop
-    rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, dist_dir=os.path.join(DIR, "madoc_dist"))
+    rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(DIR, "madoc_dist"))
 
     if rec_is_valid:
         links = [{
@@ -134,9 +143,10 @@ def main_recursive(
             dist_dir=os.path.join(DIR, "madoc_dist"),
             level=0,
             bg_color=bg_color,
-            title="root/",
+            no_mark=no_mark,
+            title=title,
         )
     # print("=== main DIR: ", DIR)
     # pprint(rec_datas)
-    index_builder(rec_datas, bg_color=bg_color)
+    index_builder(rec_datas, bg_color=bg_color, no_mark=no_mark, title=title)
     print("Madoc SUCCESS: recursive build done ! Check the 'madoc_dist' folder.")
