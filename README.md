@@ -29,3 +29,10 @@ Know more options with `madoc -h`.
 
 1.1.1: responsive design
 1.1.0: Recursive build mode
+
+# Libraries used by Madoc
+
+- Bulma (CSS framework)
+- Vue.js (JS framework)
+- Marked (JS library)
+- Jinja2 (python library)
