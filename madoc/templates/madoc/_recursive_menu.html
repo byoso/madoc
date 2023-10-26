@@ -2,8 +2,11 @@
 {% for  stage in datas %}
 
   {% if stage.directory %}
-    <a href="{{ base_dir + '/' + stage.directory.split('/')[-1]+'/documentation.madoc.html' }}">{{ stage.directory.split("/")[-1] }}</a>
-    <ul>
+    <div class="mt-1">
+      <span class="visibilityButton is-small mr-4" @click="switchVisibility('{{stage.id}}')">+/-</span>
+      <a href="{{ base_dir + '/' + stage.directory.split('/')[-1]+'/documentation.madoc.html' }}">{{ stage.directory.split("/")[-1] }}</a>
+    </div>
+    <ul id="{{ stage.id }}" class="hiddable">
       {% for file in stage.files %}
         <li class="is-size-7">{{ file[:-3] }}</li>
       {% endfor %}

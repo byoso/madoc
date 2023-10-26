@@ -47,7 +47,7 @@ def build_html(path, pages, links, dist_dir, level, bg_color, no_mark, title):
 
 
 def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dist", level=0):
-    datas = {'directory': directory, 'subdirs': [], 'files': []}
+    datas = { 'id': str(uuid.uuid4()), 'directory': directory, 'subdirs': [], 'files': []}
     is_valid = False
     links = []
     for name in os.listdir(directory):
@@ -133,6 +133,7 @@ def main_recursive(
             } for link in rec_datas['subdirs']]
         datas = {'subdirs': [], 'files': []}
         datas['subdirs'].append(rec_datas)
+        datas['id'] = uuid.uuid4()
         # pprint(datas)
         # sort rec_datas['files'] by name
         rec_datas['files'] = sorted(rec_datas['files'])
