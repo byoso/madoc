@@ -3,7 +3,11 @@
 
   {% if stage.directory %}
     <div class="mt-1">
+      {% if stage.foldable %}
       <span class="visibilityButton is-small mr-4" @click="switchVisibility('{{stage.id}}')">+/-</span>
+      {% else %}
+      <span class="noVisibilityButton is-small mr-4">+/-</span>
+      {% endif %}
       <a href="{{ base_dir + '/' + stage.directory.split('/')[-1]+'/documentation.madoc.html' }}">{{ stage.directory.split("/")[-1] }}</a>
     </div>
     <ul id="{{ stage.id }}" class="hiddable">

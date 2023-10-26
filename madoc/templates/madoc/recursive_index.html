@@ -30,10 +30,13 @@
 <nav>
 
 {% for  stage in datas %}
-
   {% if stage.directory %}
   <div class="mt-1">
+    {% if stage.foldable %}
     <span class="visibilityButton is-small mr-4" @click="switchVisibility('{{stage.id}}')">+/-</span>
+    {% else %}
+    <span class="noVisibilityButton is-small mr-4">+/-</span>
+    {% endif %}
     <a href="documentation.madoc.html">{{ title }}</a>
 
   </div>
@@ -156,8 +159,14 @@ body {
 .visibilityButton {
   cursor: pointer;
   border: 1px solid black;
-  /* border-radius: 8px; */
   padding: 2px;
+}
+
+.noVisibilityButton {
+  border: 1px solid rgb(200, 200, 200);
+  color : rgb(200, 200, 200);
+  padding: 2px;
+  user-select: none;
 }
 
 body>#content {

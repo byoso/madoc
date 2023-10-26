@@ -47,7 +47,7 @@ def build_html(path, pages, links, dist_dir, level, bg_color, no_mark, title):
 
 
 def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dist", level=0):
-    datas = { 'id': str(uuid.uuid4()), 'directory': directory, 'subdirs': [], 'files': []}
+    datas = { 'id': str(uuid.uuid4()), 'directory': directory, 'subdirs': [], 'files': [], 'foldable': True}
     is_valid = False
     links = []
     for name in os.listdir(directory):
@@ -70,6 +70,8 @@ def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dis
                     os.makedirs(os.path.join(dist_dir, name))
                 # sort rec_datas['files'] by name
                 rec_datas['files'] = sorted(rec_datas['files'])
+                if not rec_datas['files']:
+                    rec_datas['foldable'] = False
                 build_html(
                     path=path,
                     pages=rec_datas['files'],
@@ -126,6 +128,9 @@ def main_recursive(
     # Initialize the loop
     rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(DIR, "madoc_dist"))
 
+    if not rec_datas['files']:
+        rec_datas['foldable'] = False
+
     if rec_is_valid:
         links = [{
             'name': link['directory'].split("/")[-1],
@@ -134,6 +139,7 @@ def main_recursive(
         datas = {'subdirs': [], 'files': []}
         datas['subdirs'].append(rec_datas)
         datas['id'] = uuid.uuid4()
+        datas['foldable'] = True
         # pprint(datas)
         # sort rec_datas['files'] by name
         rec_datas['files'] = sorted(rec_datas['files'])
