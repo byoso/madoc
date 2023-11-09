@@ -51,7 +51,7 @@ setup(
         "madoc.assets",
         ],
     # include_package_data=True,
-    package_data={'': ['*.tpl', '*.html']},
+    package_data={'': ['*.tpl', '*.html', '*.ico']},
     python_requires='>=3.10',
     install_requires=[
         'Jinja2>=3.1.2,<4.0.0',
