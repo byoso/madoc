@@ -35,6 +35,7 @@ def build_html(path, pages, links, dist_dir, level, bg_color, no_mark, title):
     context = {
         "uuid": uuid_value,
         "index_link": level*"../" + "index.html",
+        "favicon_url": level*"../" + "favicon.ico",
         "links": links,
         "bg_color": bg_color,
         "no_mark": no_mark,
@@ -116,14 +117,22 @@ def index_builder(datas, bg_color="#fbfbfb", no_mark=False, title=""):
         f.write(template.render(**context))
 
 
-
 def main_recursive(
     bg_color="#fbfbfb",
     no_mark=False,
     title="",
 ):
+    # delete existant madoc_dist folder
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
         shutil.rmtree(os.path.join(DIR, "madoc_dist"))
+    # Create the madoc_dist folder
+    os.makedirs(os.path.join(DIR, "madoc_dist"))
+    # copy the default favicon
+    if os.path.exists(os.path.join(BASE_DIR, "assets", "favicon.ico")):
+        shutil.copy(
+            os.path.join(BASE_DIR, "assets", "favicon.ico"),
+            os.path.join(DIR, 'madoc_dist', "favicon.ico")
+            )
 
     # Initialize the loop
     rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(DIR, "madoc_dist"))

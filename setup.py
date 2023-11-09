@@ -48,6 +48,7 @@ setup(
         "madoc",
         "madoc.templates",
         "madoc.templates.madoc",
+        "madoc.assets",
         ],
     # include_package_data=True,
     package_data={'': ['*.tpl', '*.html']},

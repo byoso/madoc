@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title }}</title>
-  <link rel="icon" href="https://i.goopics.net/lhw9s2.png">
+  <link rel="icon" href="favicon.ico">
   <!-- bulma -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <!-- vue.js 3 -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <!-- markdown converter to html (cdn) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -26,12 +26,12 @@
 <div class="mt-1">
   <span class="visibilityButton is-small mr-4" @click="switchAllVisibility()">+/- all</span>
 </div>
-
+<br>
 <nav>
 
 {% for  stage in datas %}
   {% if stage.directory %}
-  <div class="mt-1">
+  <div class="">
     {% if stage.foldable %}
     <span class="visibilityButton is-small mr-4" @click="switchVisibility('{{stage.id}}')">+/-</span>
     {% else %}
@@ -47,7 +47,6 @@
     </ul>
   {% endif %}
 
-  <br>
   {% if stage.subdirs %}
   <div style="margin-left:20px;">
     {% with datas=stage.subdirs, base_dir="." %}
@@ -70,7 +69,7 @@
     delimiters: ['[[', ']]'],
     data() {
       return {
-        allVisible: true,
+        allVisible: false,
       }
     },
     computed: {
@@ -96,7 +95,15 @@
         }
       },
     },
-    beforeMount(){
+    mounted(){
+        let els = document.getElementsByClassName('hiddable')
+        for (let i = 0; i < els.length; i++) {
+          if (this.allVisible) {
+            els[i].style.display = 'block'
+          } else {
+            els[i].style.display = 'none'
+          }
+        }
     }
   }).mount('#app')
 </script>
@@ -160,6 +167,7 @@ body {
   cursor: pointer;
   border: 1px solid black;
   padding: 2px;
+  user-select: none;
 }
 
 .noVisibilityButton {

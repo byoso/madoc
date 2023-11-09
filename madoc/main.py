@@ -45,7 +45,6 @@ def cmd(*args, **kwargs):
         return
     if args.no_mark:
         no_mark = True
-    print("No mark:", no_mark)
     if args.recursive:
         main_recursive(bg_color=args.bg_color, no_mark=no_mark, title=args.title,)
         return

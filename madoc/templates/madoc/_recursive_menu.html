@@ -2,7 +2,7 @@
 {% for  stage in datas %}
 
   {% if stage.directory %}
-    <div class="mt-1">
+    <div class="">
       {% if stage.foldable %}
       <span class="visibilityButton is-small mr-4" @click="switchVisibility('{{stage.id}}')">+/-</span>
       {% else %}
@@ -17,7 +17,6 @@
     </ul>
   {% endif %}
 
-  <br>
   {% if stage.subdirs %}
   <div style="margin-left:20px;">
     {% with datas=stage.subdirs, base_dir=base_dir + "/" + stage.directory.split('/')[-1] %}
