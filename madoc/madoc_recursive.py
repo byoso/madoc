@@ -125,14 +125,6 @@ def main_recursive(
     # delete existant madoc_dist folder
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
         shutil.rmtree(os.path.join(DIR, "madoc_dist"))
-    # Create the madoc_dist folder
-    os.makedirs(os.path.join(DIR, "madoc_dist"))
-    # copy the default favicon
-    if os.path.exists(os.path.join(BASE_DIR, "assets", "favicon.ico")):
-        shutil.copy(
-            os.path.join(BASE_DIR, "assets", "favicon.ico"),
-            os.path.join(DIR, 'madoc_dist', "favicon.ico")
-            )
 
     # Initialize the loop
     rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(DIR, "madoc_dist"))
@@ -165,4 +157,11 @@ def main_recursive(
     # print("=== main DIR: ", DIR)
     # pprint(rec_datas)
     index_builder(rec_datas, bg_color=bg_color, no_mark=no_mark, title=title)
+
+    # copy the default favicon if none exists
+    if not os.path.exists(os.path.join(DIR, "favicon.ico")):
+        shutil.copy(
+            os.path.join(BASE_DIR, "assets", "favicon.ico"),
+            os.path.join(DIR, 'madoc_dist', "favicon.ico")
+            )
     print("Madoc SUCCESS: recursive build done ! Check the 'madoc_dist' folder.")
