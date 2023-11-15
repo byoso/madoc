@@ -52,7 +52,7 @@ def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dis
     is_valid = False
     links = []
     for name in os.listdir(directory):
-        if name.startswith("."):
+        if name.startswith(".") or name == 'madoc_dist':
             continue
 
         path = os.path.join(directory, name)
@@ -91,7 +91,9 @@ def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dis
         # copy or ignore files
         elif name.endswith(".madoc.html"):
             continue
-        elif name.split(".")[-1] in ["html", "css", "js", "png", "jpg", "jpeg", "gif", "svg", "ico", "json"]:
+        elif name.split(".")[-1] in [
+            "html", "css", "js", "png", "jpg", "jpeg", "gif", "svg", "ico", "json",
+            ]:
             if not os.path.exists(os.path.join(dist_dir)):
                 os.makedirs(os.path.join(dist_dir))
             shutil.copyfile(path, os.path.join(dist_dir, name))
@@ -125,6 +127,9 @@ def main_recursive(
     # delete existant madoc_dist folder
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
         shutil.rmtree(os.path.join(DIR, "madoc_dist"))
+
+    # recreate an empty madoc_dist folder
+    os.makedirs(os.path.join(DIR, "madoc_dist"))
 
     # Initialize the loop
     rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(DIR, "madoc_dist"))

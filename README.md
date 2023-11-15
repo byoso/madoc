@@ -25,10 +25,11 @@ done, you have your documentation in a single html file.
 
 Know more options with `madoc -h`.
 
-# Changelog
 
-1.1.1: responsive design
-1.1.0: Recursive build mode
+# Changelog
+
+- 1.1.1: responsive design
+- 1.1.0: Recursive build mode
 
 # Libraries used by Madoc
 

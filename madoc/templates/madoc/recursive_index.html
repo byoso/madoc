@@ -32,12 +32,14 @@
 {% for  stage in datas %}
   {% if stage.directory %}
   <div class="">
-    {% if stage.foldable %}
-    <span class="visibilityButton is-small mr-4" @click="switchVisibility('{{stage.id}}')">+/-</span>
-    {% else %}
-    <span class="noVisibilityButton is-small mr-4">+/-</span>
+    {% if stage.files %}
+      {% if stage.foldable %}
+      <span class="visibilityButton is-small mr-4" @click="switchVisibility('{{stage.id}}')">+/-</span>
+      {% else %}
+      <span class="noVisibilityButton is-small mr-4">+/-</span>
+      {% endif %}
+      <a href="documentation.madoc.html">{{ title }}</a>
     {% endif %}
-    <a href="documentation.madoc.html">{{ title }}</a>
 
   </div>
     <ul id="{{ stage.id }}" class="hiddable">
