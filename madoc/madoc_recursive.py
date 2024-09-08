@@ -91,8 +91,8 @@ def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dis
         # copy or ignore files
         elif name.endswith(".madoc.html"):
             continue
-        elif name.split(".")[-1] in [
-            "html", "css", "js", "png", "jpg", "jpeg", "gif", "svg", "ico", "json",
+        elif name.split(".")[-1].lower() in [
+            "html", "css", "js", "png", "jpg", "jpeg", "gif", "svg", "ico", "json", "pdf"
             ]:
             if not os.path.exists(os.path.join(dist_dir)):
                 os.makedirs(os.path.join(dist_dir))
