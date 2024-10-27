@@ -10,6 +10,7 @@ documentation_from_md.html
 /00_index.html
 test_files/
 madoc_dist/
+.venv/
 
 __pycache__/
 *.pyc

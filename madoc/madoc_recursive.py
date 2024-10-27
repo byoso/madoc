@@ -47,10 +47,15 @@ def build_html(path, pages, links, dist_dir, level, bg_color, no_mark, title):
         f.write(template.render(**context))
 
 
-def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dist", level=0):
+def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, include=None, dist_dir="madoc_dist", level=0):
     datas = { 'id': str(uuid.uuid4()), 'directory': directory, 'subdirs': [], 'files': [], 'foldable': True}
     is_valid = False
     links = []
+    types_to_include = [
+            # "html", "css", "js", "png", "jpg", "jpeg", "gif", "svg", "ico", "json", "pdf"
+            ]
+    if include is not None and include != 'ALL':
+        types_to_include = include.split(",") + types_to_include
     for name in os.listdir(directory):
         if name.startswith(".") or name == 'madoc_dist':
             continue
@@ -58,7 +63,7 @@ def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dis
         path = os.path.join(directory, name)
         # Directories
         if os.path.isdir(path):
-            rec_datas, rec_is_valid = parser(directory=path, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(dist_dir, name), level=level+1)
+            rec_datas, rec_is_valid = parser(directory=path, bg_color=bg_color, no_mark=no_mark, include=include, dist_dir=os.path.join(dist_dir, name), level=level+1)
             if rec_is_valid:
                 links = [{
                     'name': link['directory'].split("/")[-1],
@@ -85,15 +90,13 @@ def parser(directory=DIR, bg_color="#fbfbfb", no_mark=False, dist_dir="madoc_dis
                 )
                 is_valid = True
         # files
-        elif name.endswith(".md"):
+        elif name.lower().endswith(".md"):
             is_valid = True
             datas['files'].append(name)
         # copy or ignore files
         elif name.endswith(".madoc.html"):
             continue
-        elif name.split(".")[-1].lower() in [
-            "html", "css", "js", "png", "jpg", "jpeg", "gif", "svg", "ico", "json", "pdf"
-            ]:
+        elif include == 'ALL' or name.split(".")[-1].lower() in types_to_include:
             if not os.path.exists(os.path.join(dist_dir)):
                 os.makedirs(os.path.join(dist_dir))
             shutil.copyfile(path, os.path.join(dist_dir, name))
@@ -123,6 +126,7 @@ def main_recursive(
     bg_color="#fbfbfb",
     no_mark=False,
     title="",
+    include=None
 ):
     # delete existant madoc_dist folder
     if os.path.exists(os.path.join(DIR, "madoc_dist")):
@@ -132,7 +136,8 @@ def main_recursive(
     os.makedirs(os.path.join(DIR, "madoc_dist"))
 
     # Initialize the loop
-    rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, no_mark=no_mark, dist_dir=os.path.join(DIR, "madoc_dist"))
+    rec_datas, rec_is_valid = parser(directory=DIR, bg_color=bg_color, no_mark=no_mark, include=include,
+                                     dist_dir=os.path.join(DIR, "madoc_dist"))
 
     if not rec_datas['files']:
         rec_datas['foldable'] = False
@@ -146,8 +151,6 @@ def main_recursive(
         datas['subdirs'].append(rec_datas)
         datas['id'] = uuid.uuid4()
         datas['foldable'] = True
-        # pprint(datas)
-        # sort rec_datas['files'] by name
         rec_datas['files'] = sorted(rec_datas['files'])
         build_html(
             path=DIR,
@@ -159,8 +162,6 @@ def main_recursive(
             no_mark=no_mark,
             title=title,
         )
-    # print("=== main DIR: ", DIR)
-    # pprint(rec_datas)
     index_builder(rec_datas, bg_color=bg_color, no_mark=no_mark, title=title)
 
     # copy the default favicon if none exists
