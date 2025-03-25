@@ -11,7 +11,9 @@ Cool stuff to join a clean and easy to read documentation to some project.
 
 # Installation
 
-`pip install madoc`
+```console
+pip install madoc
+```
 
 
 # Usage
@@ -28,12 +30,19 @@ Know more options with `madoc -h`.
 
 # Changelog
 
+- 2.0.0: reworked without any JS dependencies (=offline readable), prettier template, base64 images conversion !
+    - to be deprecated: the recursive option, will be replaced by something else (WIP)
 - 1.1.1: responsive design
 - 1.1.0: Recursive build mode
 
 # Libraries used by Madoc
-
+JS  (used in recursive mode only)
 - Bulma (CSS framework)
 - Vue.js (JS framework)
 - Marked (JS library)
+
+Python (already included in the pip setup)
 - Jinja2 (python library)
+- markdown
+- Pygments
+- requests

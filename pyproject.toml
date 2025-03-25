@@ -1,0 +1,46 @@
+[build-system]
+requires = ["wheel", "setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "madoc"
+version = "1.2.3"
+description = "Documentation generator from markdown files"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.8"
+authors = [
+  {name = "Vincent Fabre", email = "peigne.plume@gmail.com"},
+]
+keywords= ["markdown", "html", "documentation"]
+
+classifiers=[
+    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "Natural Language :: English",
+]
+dependencies = [
+    "jinja2>=3.1.2,<4.0.0",
+    "markdown>=3.7,<4.0.0",
+    "pygments>=2.19.1,<3.0.0",
+    "requests>=2.32.3,<3.0.0",
+]
+
+[project.scripts]
+madoc = "madoc.main:cmd"
+
+[project.urls]
+Homepage = "https://github.com/byoso/madoc"
+Repository = "https://github.com/byoso/madoc"
+
+[tool.setuptools]
+packages = [
+    "madoc",
+    "madoc.templates",
+    "madoc.templates.madoc",
+    "madoc.assets",
+    "madoc.silly_engine",
+    ]
+
+[tool.setuptools.package-data]
+"*" = ['*.tpl', '*.html', '*.ico', '*.css']
