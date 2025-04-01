@@ -17,25 +17,58 @@
   <script>
 
     let showMenu = true
+    let screenIsSmall = false
+    let lastDisplayed = 1
+    let lastPosition = 0
+
+    function isScreenSmall(){
+        if (window.screen.width < 700) {
+          screenIsSmall = true
+          if (showMenu){hideAll()}
+        }else {
+          screenIsSmall = false
+          display(lastDisplayed)
+        }
+    }
+    addEventListener("resize", (event) => {});
+    onresize = (event) => {isScreenSmall()};
+
 
     function switchMenu() {
       showMenu = !showMenu
       if (showMenu) {
+        lastPosition = document.documentElement.scrollTop || document.body.scrollTop
         document.getElementById("sideNav").style.width = "400px";
         document.getElementById("main").style.marginLeft = "400px";
+        console.log(lastPosition)
+        if (screenIsSmall){
+          hideAll()
+        }
       } else {
         document.getElementById("sideNav").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
+        if (screenIsSmall){
+          display(lastDisplayed)
+        }
       }
     }
 
-    function display(index="no index") {
+    function hideAll() {
       let allContents = document.getElementsByClassName("content")
       for (var i=0;i<allContents.length;i++) {
         allContents[i].hidden = true
       }
+    }
+
+    function display(index="no index") {
+      hideAll()
       let selectedContent = document.getElementById(`content-${index}`)
       selectedContent.hidden = false
+      if (index === lastDisplayed){
+        window.scrollTo(0, lastPosition);
+      }
+
+      lastDisplayed = index
 
       let allButtons = document.getElementsByClassName("button")
       for (var i=0;i<allButtons.length;i++) {
@@ -43,8 +76,12 @@
       }
       let selectedButton = document.getElementById(`button-${index}`)
       selectedButton.classList.add("button-selected")
+      if (screenIsSmall) {
+        document.getElementById("sideNav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+        showMenu = false
+      }
     }
-
   </script>
 
   <div id="sideNav" class="sidenav">
@@ -72,7 +109,12 @@
 
   </div>
   <script>
-    display(1)
+    isScreenSmall()
+    if (screenIsSmall & showMenu){
+      hideAll()
+    }else {
+      display(1)
+    }
   </script>
 
 </body>

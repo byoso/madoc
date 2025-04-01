@@ -2,10 +2,13 @@
 index.html
 note.jpeg
 /favicon.ico
+# some test files
 static_in_root.md
 page_01.md
 page_02.md
 page_03.md
+(02)page_alpha.md
+(01)page_beta.md
 documentation_from_md.html
 /00_index.html
 test_files/

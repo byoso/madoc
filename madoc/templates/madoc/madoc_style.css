@@ -1,7 +1,6 @@
 
 html {
   background-color: rgb(228, 228, 228);
-  margin: 10px;
 }
 
 body {
@@ -64,15 +63,6 @@ body {
   margin-left: 20px;
 }
 
-@media only screen and (max-width: 600px) {
-    body {
-        padding: 5px;
-    }
-    body>#content {
-        padding: 0px 20px 20px 20px !important;
-    }
-}
-
 body>#content {
     margin: 0px;
     max-width: 900px;
@@ -99,6 +89,22 @@ hr {
     border: none;
 }
 
+@media only screen and (max-width: 700px) {
+    html {
+        margin: 5px;
+    }
+    body {
+        padding: 0px;
+        margin: 0px;
+    }
+    body>#content {
+        padding: 0px !important;
+        margin: 0px !important;
+    }
+    .menu-item {
+        margin-left: 10px;
+    }
+}
 
 /**
 * Links
