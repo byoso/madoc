@@ -1,10 +1,29 @@
+# test it works
+#   pip install -e .
+# build the package
+#   pip install build
+#   python -m build
+# check with twine
+#   pip install twine
+#   twine check dist/*
+
+# push on testpypi
+#   twine upload --repository testpypi dist/*
+# install from testpypi
+#   pip install -i https://test.pypi.org/simple/ <your package>
+
+# push on pypi
+#   twine upload dist/*
+
+
+
 [build-system]
 requires = ["wheel", "setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "madoc"
-version = "1.2.5"
+version = "1.2.6"
 description = "Documentation generator from markdown files"
 readme = "README.md"
 license = "MIT"

@@ -30,6 +30,7 @@ Know more options with `madoc -h`.
 
 # Changelog
 
+- 1.2.6: converts download links to base64 (optionnal)
 - 1.2.5: responsive design improved, possibility to prefix the files with '(XXX..)' to sort the files without appearing in the displayed names
 - 1.2.0: reworked without any JS dependencies (=readable offline), prettier template, base64 images conversion !
     - to be deprecated: the recursive option, will be replaced by something else (WIP...)

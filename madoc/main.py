@@ -38,7 +38,7 @@ def cmd(*args, **kwargs) -> None:
             "\nOr recursively gather your documentation in an index.html file and subfolders, usable as a static site."
             )
         )
-    parser.add_argument("--no-b64", help="do not convert images to base64", action="store_true")
+    parser.add_argument("--no-b64", help="do not convert files to base64", action="store_true")
     parser.add_argument("-t", "--title", type=str, default="Documents", help="Title of the page, default is 'Documents' (root page if recursive)")
     parser.add_argument("-c", "--code", help="enable code syntax coloration", action="store_true")
     parser.add_argument("-V", "--version", help="Version", action="store_true")
