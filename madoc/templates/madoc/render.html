@@ -93,10 +93,20 @@
         <span class="tooltip-content">{{ page.name }}</span>
       </button>
       {% endfor %}
+
+      {% if has_source_files and source_files_zip %}
+      <hr>
+      <div class="menu-item after-menu">
+        <a href="{{ source_files_zip }}" download="madoc_sources.zip">Download source files (ZIP)</a>
+      </div>
+      {% endif %}
+
       <div class="menuWedge"></div>
     </div>
   </div>
+
   <span class="openButton" onclick="switchMenu()">&#9776;</span>
+
   <div id="main">
     <div id="content">
       {% for page in pages %}

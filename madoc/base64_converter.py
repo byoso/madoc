@@ -82,8 +82,6 @@ class ImageBase64Processor(Preprocessor):
         return match.group(0).replace(image_path, base64_str) if base64_str else match.group(0)
 
 
-
-
 class ImageBase64Extension(Extension):
     """Markdown extension to replace images with Base64 outside of code blocks."""
 

@@ -63,6 +63,10 @@ body {
   margin-left: 20px;
 }
 
+.after-menu{
+    margin-top: 20px;
+}
+
 body>#content {
     margin: 0px;
     max-width: 900px;
@@ -251,10 +255,6 @@ li+li {
     color: #24292e;
 }
 
-a:visited {
-    color: #0366d6;
-}
-
 h1,
 h2,
 h3 {
@@ -265,10 +265,6 @@ h3 {
 
 code>* {
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
-}
-
-html {
-background-color: {{ bg_color }};
 }
 
 body {
