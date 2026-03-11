@@ -58,11 +58,11 @@ class ImageBase64Processor(Preprocessor):
                 # Replace Markdown images
                 line = self.image_md_pattern.sub(self.replace_md_image, line)
                 # Replace HTML images
-                line = self.image_html_pattern.sub(self.replace_ressource_path, line)
-                # replace ressource download link in Md
-                line = self.link_md_pattern.sub(self.replace_ressource_path, line)
-                # replace ressource download link in html
-                line = self.link_html_pattern.sub(self.replace_ressource_path, line)
+                line = self.image_html_pattern.sub(self.replace_resource_path, line)
+                # replace resource download link in Md
+                line = self.link_md_pattern.sub(self.replace_resource_path, line)
+                # replace resource download link in html
+                line = self.link_html_pattern.sub(self.replace_resource_path, line)
 
 
             processed_lines.append(line)
@@ -75,8 +75,8 @@ class ImageBase64Processor(Preprocessor):
         base64_str = encode_to_base64(image_path)
         return f"![{alt_text}]({base64_str})" if base64_str else match.group(0)
 
-    def replace_ressource_path(self, match):
-        """Replaces ressource paths with Base64."""
+    def replace_resource_path(self, match):
+        """Replaces resource paths with Base64."""
         image_path = match.group(1)
         base64_str = encode_to_base64(image_path)
         return match.group(0).replace(image_path, base64_str) if base64_str else match.group(0)
@@ -92,17 +92,3 @@ def convert_images_to_base64(markdown_text: str) -> str:
     """Replaces Markdown and HTML images with Base64 encoding, but ignores images inside code blocks."""
     md = markdown.Markdown(extensions=[ImageBase64Extension()])
     return md.convert(markdown_text)
-
-# Example Markdown with local & web images
-markdown_text = """
-# Example Markdown
-
-Local image (should convert):
-![Local](images/picture.jpg)
-
-Web image (should convert if downloadable):
-![Web Image](https://example.com/image.png)
-
-HTML image from the web:
-<img src="https://example.com/photo.jpg" alt="Photo">
-"""

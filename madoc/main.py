@@ -19,11 +19,9 @@ from madoc.silly_engine.text_tools import c
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIR = os.getcwd()
 
-# defaults
-no_b64 = False
-
+_madoc_loader = MadocLoader(os.path.join(BASE_DIR, "templates"))
 env = Environment(
-    loader=MadocLoader(os.path.join(BASE_DIR, "templates")),
+    loader=_madoc_loader,
     autoescape=select_autoescape()
 )
 
@@ -54,7 +52,7 @@ def cmd(*args, **kwargs) -> None:
         try:
             shutil.copyfile(src_template, dest_template)
             print(f"Copied template to {dest_template}")
-        except Exception as e:
+        except OSError as e:
             print(f"Error copying template: {e}")
         return
 
@@ -65,7 +63,6 @@ def cmd(*args, **kwargs) -> None:
 
     no_b64 = False
     add_src = False
-    minimize_html = False
     if args.version:
         print(__version__)
         return
@@ -74,7 +71,6 @@ def cmd(*args, **kwargs) -> None:
     if args.no_b64:
         no_b64 = True
         print("= no b64 images")
-        minimize_html = True
     if args.add_src:
         add_src = True
 
@@ -106,7 +102,6 @@ def cmd(*args, **kwargs) -> None:
         syntax_color=args.code,
         add_src=add_src,
         no_b64=no_b64,
-        minimize_html=minimize_html,
         template_file=args.template_file,
         template_basename=template_basename,
         build_command=build_command,
@@ -116,12 +111,24 @@ def cmd(*args, **kwargs) -> None:
 def clean_filename(filename: str) -> str:
     return re.sub(r"^\([^)]+\)", "", filename).strip().replace(".md", "").replace(".MD", "")
 
+
+def rewrite_internal_md_links(html: str, file_to_tab_index: dict) -> str:
+    """Replace internal .md href links with JS tab navigation calls."""
+    def replace(match):
+        quote = match.group(1)
+        href = match.group(2)
+        clean = href.split("#")[0].split("?")[0].strip()
+        if clean in file_to_tab_index:
+            idx = file_to_tab_index[clean]
+            return f'href={quote}javascript:void(0){quote} onclick="display({idx})"'
+        return match.group(0)
+    return re.sub(r'href=(["\'])([^"\']+)\1', replace, html)
+
 def main(
     title: str="Documents",
     syntax_color: bool=False,
     add_src: bool = False,
     no_b64: bool = False,
-    minimize_html: bool = False,
     template_file: str | None = None,
     template_basename: str | None = None,
     build_command: str | None = None,
@@ -129,6 +136,8 @@ def main(
     """Convert all markdown files to html files"""
     pages = []
     files = sorted(os.listdir(DIR))
+    md_files_sorted = [f for f in files if f.endswith(".md") or f.endswith(".MD")]
+    file_to_tab_index = {f: i + 1 for i, f in enumerate(md_files_sorted)}
     source_files = []
     linked_resources = set()
     for file in files:
@@ -136,11 +145,11 @@ def main(
         if file.endswith(".md") or file.endswith(".MD"):
             print(file)
             source_files.append(file)
-            with open(file, "r") as md_file:
+            with open(file, "r", encoding="utf-8") as md_file:
                 page['name'] = clean_filename(file)
                 raw_content = md_file.read()
                 linked_resources.update(extract_local_resource_paths(raw_content))
-                extentions = [
+                extensions = [
                     "abbr",              # Abbreviations
                     "admonition",        # Notes, Warnings, etc.
                     "attr_list",         # HTML attributes on elements
@@ -156,11 +165,12 @@ def main(
                     "smarty",            # Smart punctuation (quotes, dashes)
                     "tables",            # GitHub-style tables
                     "toc",               # Table of Contents
-                    "wikilinks",         # Wiki-style links])
+                    "wikilinks",         # Wiki-style links
                 ]
                 if syntax_color:
-                    extentions.append("codehilite")  # Syntax highlighting (requires Pygments))
-                page["content"] = markdown.markdown(raw_content, extensions=extentions)
+                    extensions.append("codehilite")  # Syntax highlighting (requires Pygments)
+                page["content"] = markdown.markdown(raw_content, extensions=extensions)
+                page["content"] = rewrite_internal_md_links(page["content"], file_to_tab_index)
                 if not no_b64:
                     page["content"] = convert_images_to_base64(page["content"])
             pages.append(page)
@@ -189,7 +199,7 @@ def main(
                         shutil.copyfile(template_path_abs, local_template_path)
                     # always include the basename in archive sources
                     extras.append(local_template_path)
-            except Exception as e:
+            except OSError as e:
                 print(f"Warning: could not include template in archive: {e}")
 
         # add madoc_build.sh in archive with exact invocation command used
@@ -201,20 +211,10 @@ def main(
                     f.write(build_command + "\n")
                 os.chmod(build_script_path, 0o755)
                 extras.append(build_script_path)
-            except Exception as e:
+            except OSError as e:
                 print(f"Warning: could not create build script: {e}")
 
         archive_name = create_zip_from_files(source_files, extra_files=extras)
-
-        # cleanup local temporary build script if created
-        if build_command:
-            try:
-                os.remove(build_script_path)
-            except Exception:
-                pass
-
-        # do not delete the copied template if present (needed for regeneration)
-        # note: template exists in the archive and can be used by madoc_build.sh
 
         if archive_name:
             if not no_b64:
@@ -233,7 +233,7 @@ def main(
         custom_env = Environment(
             loader=ChoiceLoader([
                 FileSystemLoader(os.path.dirname(template_path)),
-                env.loader
+                _madoc_loader,
             ]),
             autoescape=select_autoescape()
         )
@@ -250,7 +250,7 @@ def main(
     }
 
     html_content = template_to_use.render(**context)
-    with open("documentation.madoc.html", "w") as f:
+    with open("documentation.madoc.html", "w", encoding="utf-8") as f:
         f.write(html_content)
 
     print(f"{c.success}Done !{c.end}")

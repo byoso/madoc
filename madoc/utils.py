@@ -2,7 +2,6 @@ import base64
 import os
 import re
 import zipfile
-from datetime import datetime
 
 
 def _is_local_resource(path: str) -> bool:
@@ -37,9 +36,6 @@ def extract_local_resource_paths(text: str) -> set[str]:
             paths.add(resource)
 
     return paths
-
-
-import base64
 
 
 def create_zip_from_files(files: list, extra_files: list | None = None) -> str:
