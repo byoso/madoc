@@ -69,7 +69,7 @@ Notes:
 
 
 # Changelog
-
+- 1.4.0: Bookdinding
 - 1.3.0: customizing a template is possible
 - 1.2.6: converts download links to base64 (optionnal)
 - 1.2.5: responsive design improved, possibility to prefix the files with '(XXX..)' to sort the files without appearing in the displayed names
