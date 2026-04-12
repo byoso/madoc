@@ -25,3 +25,4 @@ build/
 dist/
 madoc.egg-info/
 madoc/__pycache__/
+madoc-bookbinding.html

@@ -12,6 +12,11 @@ from typing import Optional
 def encode_to_base64(image_path: str) -> Optional[str]:
     """Encodes an image file (local or web) to a Base64 string with the correct MIME type."""
     try:
+        image_path = image_path.strip()
+        # Already embedded data URI: keep as-is and skip any file/network access.
+        if image_path.lower().startswith("data:"):
+            return image_path
+
         if image_path.startswith(("http://", "https://")):
             # Download the image from the web
             response = requests.get(image_path, timeout=5)

@@ -16,10 +16,34 @@
 <body>
   <script>
 
+    const BURGER_BASE_LEFT = 10
+    const BURGER_SLOT_WIDTH = 56
     let showMenu = true
     let screenIsSmall = false
     let lastDisplayed = 1
     let lastPosition = 0
+    let inheritedBurgerSlots = 0
+
+    function readInheritedBurgerSlots() {
+      const match = /^madoc-burger-slots-(\d+)$/.exec(window.name || "")
+      if (!match) {
+        return 0
+      }
+      return parseInt(match[1], 10) || 0
+    }
+
+    function placeBurgerButton() {
+      const burger = document.querySelector(".openButton")
+      if (!burger) {
+        return
+      }
+      burger.style.left = `${BURGER_BASE_LEFT + (inheritedBurgerSlots * BURGER_SLOT_WIDTH)}px`
+    }
+
+    function updateInheritedBurgerSlots(slotCount) {
+      inheritedBurgerSlots = Math.max(0, slotCount)
+      placeBurgerButton()
+    }
 
     function isScreenSmall(){
         if (window.screen.width < 700) {
@@ -32,6 +56,17 @@
     }
     addEventListener("resize", (event) => {});
     onresize = (event) => {isScreenSmall()};
+
+    window.addEventListener("message", (event) => {
+      const payload = event.data
+      if (!payload || payload.type !== "madoc-burger-slots") {
+        return
+      }
+      if (typeof payload.slots !== "number") {
+        return
+      }
+      updateInheritedBurgerSlots(payload.slots)
+    })
 
 
     function switchMenu() {
@@ -119,6 +154,7 @@
 
   </div>
   <script>
+    updateInheritedBurgerSlots(readInheritedBurgerSlots())
     isScreenSmall()
     if (screenIsSmall & showMenu){
       hideAll()

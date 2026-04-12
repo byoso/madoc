@@ -18,14 +18,54 @@ pip install madoc
 
 # Usage
 
-Open a terminal in the directory where the .md files are,
-and just type:
+Use the source directory as a positional argument:
+
+`madoc .`
+
+You can combine options and source path:
+
+`madoc -t "My title" .`
+
+You can also choose where the generated html is written with `-o`/`--output`
+(path is relative to where you launch the command):
+
+`madoc test_files -o out`
+
+`madoc -t "My title" test_files -o ./dist`
+
+If no source directory is provided, Madoc uses the current directory:
 
 `madoc`
 
-done, you have your documentation in a single html file.
+done, you have your documentation in a single html file in the source directory.
+
+If `-o` is provided, the html file is written in the output directory instead.
 
 Know more options with `madoc -h`.
+
+
+# Bookbinding usage
+
+You can aggregate multiple existing html pages into a single portal page with:
+
+`madoc-bookbinding`
+
+Short alias:
+
+`madoc-bb`
+
+Examples:
+
+`madoc-bb -p some.html -i icon.png -p another.html --output .`
+
+`madoc-bookbinding -p first.html -p second.html -o ./dist`
+
+Notes:
+- `-p` adds a page.
+- `-i` sets the icon of the previous `-p`.
+- default mode embeds pages/icons as base64.
+- `--no-b64` keeps file links/URLs.
+- `--get-template` copies the default bookbinding template locally.
 
 
 # Changelog

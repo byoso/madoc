@@ -11,9 +11,10 @@ def _is_local_resource(path: str) -> bool:
     return not (normalized.startswith("http://") or normalized.startswith("https://") or normalized.startswith("data:"))
 
 
-def extract_local_resource_paths(text: str) -> set[str]:
+def extract_local_resource_paths(text: str, base_dir: str | None = None) -> set[str]:
     """Detect local referenced files from markdown and HTML link/img patterns."""
     paths = set()
+    root_dir = os.path.abspath(base_dir or os.getcwd())
 
     # Markdown image and link patterns
     md_pattern = re.compile(r"!\[.*?\]\(([^)]+)\)|\[[^\]]*\]\(([^)]+)\)")
@@ -22,8 +23,9 @@ def extract_local_resource_paths(text: str) -> set[str]:
         if not resource:
             continue
         resource = resource.split("#")[0].split("?")[0].strip()
-        if _is_local_resource(resource) and os.path.isfile(resource):
-            paths.add(resource)
+        candidate = resource if os.path.isabs(resource) else os.path.join(root_dir, resource)
+        if _is_local_resource(resource) and os.path.isfile(candidate):
+            paths.add(os.path.abspath(candidate))
 
     # HTML img src and a href
     html_pattern = re.compile(r"<(?:img|a)[^>]+?(?:src|href)=[\'\"](.*?)[\'\"][^>]*>", re.IGNORECASE)
@@ -32,13 +34,19 @@ def extract_local_resource_paths(text: str) -> set[str]:
         if not resource:
             continue
         resource = resource.split("#")[0].split("?")[0].strip()
-        if _is_local_resource(resource) and os.path.isfile(resource):
-            paths.add(resource)
+        candidate = resource if os.path.isabs(resource) else os.path.join(root_dir, resource)
+        if _is_local_resource(resource) and os.path.isfile(candidate):
+            paths.add(os.path.abspath(candidate))
 
     return paths
 
 
-def create_zip_from_files(files: list, extra_files: list | None = None) -> str:
+def create_zip_from_files(
+    files: list[str],
+    extra_files: list[str] | None = None,
+    output_dir: str | None = None,
+    base_dir: str | None = None,
+) -> str:
     """Create a zip archive with the provided files and optional extra files.
 
     - `files`: source markdown files (raw content)
@@ -56,7 +64,9 @@ def create_zip_from_files(files: list, extra_files: list | None = None) -> str:
         return ""
 
     archive_name = "madoc_sources.zip"
-    archive_path = os.path.abspath(archive_name)
+    output_root = os.path.abspath(output_dir or os.getcwd())
+    archive_path = os.path.join(output_root, archive_name)
+    archive_base_dir = os.path.abspath(base_dir or output_root)
 
     with zipfile.ZipFile(archive_path, mode="w", compression=zipfile.ZIP_DEFLATED) as archive:
         for filepath in all_files:
@@ -70,7 +80,10 @@ def create_zip_from_files(files: list, extra_files: list | None = None) -> str:
             if abs_path == archive_path:
                 continue
 
-            arcname = os.path.relpath(abs_path, start=os.getcwd())
+            if os.path.commonpath([abs_path, archive_base_dir]) == archive_base_dir:
+                arcname = os.path.relpath(abs_path, start=archive_base_dir)
+            else:
+                arcname = os.path.basename(abs_path)
             archive.write(abs_path, arcname=arcname)
 
-    return os.path.basename(archive_path)
+    return archive_path
