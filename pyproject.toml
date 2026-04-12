@@ -5,15 +5,15 @@
 #   python -m build
 # check with twine
 #   pip install twine
-#   twine check dist/*
+#   python -m twine check dist/*
 
 # push on testpypi
-#   twine upload --repository testpypi dist/*
+#   python -m twine upload --repository testpypi dist/*
 # install from testpypi
 #   pip install -i https://test.pypi.org/simple/ <your package>
 
 # push on pypi
-#   twine upload dist/*
+#   python -m twine upload dist/*
 
 
 
