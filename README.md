@@ -69,6 +69,8 @@ Notes:
 
 
 # Changelog
+
+- 1.5.0: css overload ability
 - 1.4.0: Bookdinding
 - 1.3.0: customizing a template is possible
 - 1.2.6: converts download links to base64 (optionnal)

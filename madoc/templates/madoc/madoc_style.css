@@ -17,6 +17,7 @@ body {
         margin: 5px;
         overflow-x: hidden;
         font-size: large;
+    text-align: left;
 }
 .button:hover {
     border: green solid 2px;

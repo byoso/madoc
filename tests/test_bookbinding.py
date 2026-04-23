@@ -1,11 +1,14 @@
 import os
+import sys
 from pathlib import Path
 
 import pytest
 
+from madoc.bookbinding.entrypoint import cmd as bookbinding_cmd
 from madoc.bookbinding.entrypoint import _build_icon_url
 from madoc.bookbinding.entrypoint import _build_page_url
 from madoc.bookbinding.entrypoint import _prepare_ordered_entries
+from madoc.bookbinding.entrypoint import _resolve_page_label
 
 
 def test_prepare_ordered_entries_keeps_page_icon_pairing(tmp_path: Path) -> None:
@@ -69,3 +72,55 @@ def test_build_page_url_b64_embeds_html(tmp_path: Path) -> None:
 
     page_url = _build_page_url(str(page), output_dir=str(output_dir), no_b64=False)
     assert page_url.startswith("data:text/html;base64,")
+
+
+def test_resolve_page_label_strips_html_suffix_when_title_missing(tmp_path: Path) -> None:
+    page = tmp_path / "sample.html"
+    page.write_text("<html><body>No title</body></html>", encoding="utf-8")
+
+    label = _resolve_page_label(str(page))
+
+    assert label == "sample"
+
+
+def test_bookbinding_cmd_get_css_copies_default_css(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, "argv", ["madoc-bb", "--get-css"])
+
+    bookbinding_cmd()
+
+    copied_css = tmp_path / "madoc_style.css"
+    assert copied_css.is_file()
+    assert copied_css.read_text(encoding="utf-8")
+
+
+def test_bookbinding_cmd_uses_custom_css(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    page = tmp_path / "doc.html"
+    page.write_text("<html><head><title>Doc</title></head><body>Hello</body></html>", encoding="utf-8")
+
+    custom_css = tmp_path / "custom.css"
+    custom_css.write_text("/* bb-custom-css-marker */\nbody { border: 0; }", encoding="utf-8")
+
+    output_dir = tmp_path / "out"
+    output_dir.mkdir()
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "madoc-bb",
+            "-p",
+            str(page),
+            "--css",
+            str(custom_css),
+            "-o",
+            str(output_dir),
+        ],
+    )
+
+    bookbinding_cmd()
+
+    output_html = output_dir / "madoc-bookbinding.html"
+    assert output_html.is_file()
+    html = output_html.read_text(encoding="utf-8")
+    assert "bb-custom-css-marker" in html

@@ -25,6 +25,7 @@ env = Environment(
 )
 
 template = env.get_template("madoc/render.html")
+DEFAULT_CSS_COPY_NAME = "madoc_style.css"
 
 
 def cmd(*args, **kwargs) -> None:
@@ -43,7 +44,9 @@ def cmd(*args, **kwargs) -> None:
     parser.add_argument("--no-b64", help="do not convert files to base64", action="store_true")
     parser.add_argument("--add-src", help="includes scr files, at the cost of doubling the size of the document", action="store_true")
     parser.add_argument("--get-template", help="get a madoc_template.html in source directory and exit", action="store_true")
+    parser.add_argument("--get-css", help="get a madoc_style.css in source directory and exit", action="store_true")
     parser.add_argument("-f", "--template", dest="template_file", type=str, default=None, help="path to alternate Jinja2 template")
+    parser.add_argument("--css", dest="css_file", type=str, default=None, help="path to alternate CSS file")
     parser.add_argument("-t", "--title", type=str, default="Documents", help="Title of the page, default is 'Documents'")
     parser.add_argument("-c", "--code", help="enable code syntax coloration", action="store_true")
     parser.add_argument("-V", "--version", help="Version", action="store_true")
@@ -68,14 +71,26 @@ def cmd(*args, **kwargs) -> None:
         print(f"Cannot create output directory: {output_dir} ({e})")
         return
 
+    copied_asset = False
     if args.get_template:
         src_template = os.path.join(BASE_DIR, "templates", "madoc", "render.html")
         dest_template = os.path.join(source_dir, "madoc_template.html")
         try:
             shutil.copyfile(src_template, dest_template)
             print(f"Copied template to {dest_template}")
+            copied_asset = True
         except OSError as e:
             print(f"Error copying template: {e}")
+    if args.get_css:
+        src_css = os.path.join(BASE_DIR, "templates", "madoc", "madoc_style.css")
+        dest_css = os.path.join(source_dir, DEFAULT_CSS_COPY_NAME)
+        try:
+            shutil.copyfile(src_css, dest_css)
+            print(f"Copied css to {dest_css}")
+            copied_asset = True
+        except OSError as e:
+            print(f"Error copying css: {e}")
+    if copied_asset:
         return
 
     if args.template_file:
@@ -86,6 +101,15 @@ def cmd(*args, **kwargs) -> None:
             print(f"Template file not found: {template_candidate}")
             return
         args.template_file = template_candidate
+
+    if args.css_file:
+        css_candidate = args.css_file
+        if not os.path.isabs(css_candidate):
+            css_candidate = os.path.join(source_dir, css_candidate)
+        if not os.path.isfile(css_candidate):
+            print(f"CSS file not found: {css_candidate}")
+            return
+        args.css_file = css_candidate
 
     no_b64 = False
     add_src = False
@@ -124,6 +148,11 @@ def cmd(*args, **kwargs) -> None:
         template_basename = os.path.basename(args.template_file)
         command_parts.extend(["-f", q(template_basename)])
 
+    css_basename = None
+    if args.css_file:
+        css_basename = os.path.basename(args.css_file)
+        command_parts.extend(["--css", q(css_basename)])
+
     build_command = " ".join(command_parts)
 
     main(
@@ -135,6 +164,8 @@ def cmd(*args, **kwargs) -> None:
         no_b64=no_b64,
         template_file=args.template_file,
         template_basename=template_basename,
+        css_file=args.css_file,
+        css_basename=css_basename,
         build_command=build_command,
     )
 
@@ -164,6 +195,8 @@ def main(
     no_b64: bool = False,
     template_file: str | None = None,
     template_basename: str | None = None,
+    css_file: str | None = None,
+    css_basename: str | None = None,
     build_command: str | None = None,
 ) -> None:
     """Convert all markdown files to html files"""
@@ -238,6 +271,18 @@ def main(
             except OSError as e:
                 print(f"Warning: could not include template in archive: {e}")
 
+        # Add css file among sources so we can rebuild exactly
+        if css_file and css_basename:
+            css_path_abs = os.path.abspath(css_file)
+            local_css_path = os.path.join(source_dir, css_basename)
+            try:
+                if os.path.isfile(css_path_abs):
+                    if css_path_abs != os.path.abspath(local_css_path):
+                        shutil.copyfile(css_path_abs, local_css_path)
+                    extras.append(local_css_path)
+            except OSError as e:
+                print(f"Warning: could not include css in archive: {e}")
+
         # add madoc_build.sh in archive with exact invocation command used
         if build_command:
             build_script_path = os.path.join(source_dir, "madoc_build.sh")
@@ -265,7 +310,8 @@ def main(
             else:
                 source_files_zip = os.path.relpath(archive_path, start=output_dir)
 
-    # Template selection
+    # Template and CSS selection
+    template_path = None
     if template_file:
         template_path = template_file
         if not os.path.isabs(template_path):
@@ -274,21 +320,48 @@ def main(
         if not os.path.isfile(template_path):
             print(f"Template file not found: {template_path}")
             return
+
+    css_path = None
+    if css_file:
+        css_path = css_file
+        if not os.path.isabs(css_path):
+            css_path = os.path.join(source_dir, css_path)
+        css_path = os.path.abspath(css_path)
+        if not os.path.isfile(css_path):
+            print(f"CSS file not found: {css_path}")
+            return
+
+    if template_path or css_path:
+        loader_dirs = []
+        if template_path:
+            loader_dirs.append(os.path.dirname(template_path))
+        if css_path:
+            css_dir = os.path.dirname(css_path)
+            if css_dir not in loader_dirs:
+                loader_dirs.append(css_dir)
+
         custom_env = Environment(
             loader=ChoiceLoader([
-                FileSystemLoader(os.path.dirname(template_path)),
+                *(FileSystemLoader(path) for path in loader_dirs),
                 _madoc_loader,
             ]),
             autoescape=select_autoescape()
         )
-        template_to_use = custom_env.get_template(os.path.basename(template_path))
+        if template_path:
+            template_to_use = custom_env.get_template(os.path.basename(template_path))
+        else:
+            template_to_use = custom_env.get_template("madoc/render.html")
     else:
         template_to_use = template
+
+    css_style = "madoc/madoc_style.css"
+    if css_path:
+        css_style = os.path.basename(css_path)
 
     context = {
         "title": title,
         "pages": pages,
-        "css_style": "madoc/madoc_style.css",
+        "css_style": css_style,
         "has_source_files": add_src,
         "source_files_zip": source_files_zip,
     }
